@@ -1,4 +1,4 @@
-{{-- resources/views/admin/contents/create.blade.php --}}
+{{-- resources/views/admin/contents/create.blade.php - FIXED VERSION --}}
 @extends('admin.layouts.app')
 
 @section('title', 'Add New Content')
@@ -22,6 +22,7 @@
                             <option value="our_vision" {{ old('key') == 'our_vision' ? 'selected' : '' }}>Our Vision</option>
                             <option value="contact_us" {{ old('key') == 'contact_us' ? 'selected' : '' }}>Contact Us</option>
                             <option value="page_headers" {{ old('key') == 'page_headers' ? 'selected' : '' }}>Page Headers</option>
+                            <option value="site_logo" {{ old('key') == 'site_logo' ? 'selected' : '' }}>Site Logo</option>
                             <option value="custom" {{ old('key') == 'custom' ? 'selected' : '' }}>Custom Content</option>
                         </select>
                         <small class="form-text text-muted">Choose a predefined content type or select "Custom Content" to enter your own key</small>
@@ -87,8 +88,8 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="hero_title_{{ $language->code }}" class="form-label">Hero Title ({{ $language->name }}) *</label>
-                                            <input type="text" class="form-control" name="content_{{ $language->code }}[title]" 
-                                                   value="{{ old('content_' . $language->code . '.title') }}" required>
+                                            <input type="text" class="form-control hero-required" name="content_{{ $language->code }}[title]" 
+                                                   value="{{ old('content_' . $language->code . '.title') }}">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -113,8 +114,8 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="action_title_{{ $language->code }}" class="form-label">Title ({{ $language->name }}) *</label>
-                                            <input type="text" class="form-control" name="content_{{ $language->code }}[title]" 
-                                                   value="{{ old('content_' . $language->code . '.title') }}" required>
+                                            <input type="text" class="form-control take-action-required" name="content_{{ $language->code }}[title]" 
+                                                   value="{{ old('content_' . $language->code . '.title') }}">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -155,12 +156,12 @@
                             <div class="content-form" data-type="about_us our_vision" style="display: none;">
                                 <div class="mb-3">
                                     <label for="section_title_{{ $language->code }}" class="form-label">Title ({{ $language->name }}) *</label>
-                                    <input type="text" class="form-control" name="content_{{ $language->code }}[title]" 
-                                           value="{{ old('content_' . $language->code . '.title') }}" required>
+                                    <input type="text" class="form-control section-required" name="content_{{ $language->code }}[title]" 
+                                           value="{{ old('content_' . $language->code . '.title') }}">
                                 </div>
                                 <div class="mb-3">
                                     <label for="section_content_{{ $language->code }}" class="form-label">Content ({{ $language->name }}) *</label>
-                                    <textarea class="form-control summernote" name="content_{{ $language->code }}[content]" rows="10" required>{{ old('content_' . $language->code . '.content') }}</textarea>
+                                    <textarea class="form-control summernote section-required" name="content_{{ $language->code }}[content]" rows="10">{{ old('content_' . $language->code . '.content') }}</textarea>
                                 </div>
                             </div>
 
@@ -170,8 +171,8 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="contact_title_{{ $language->code }}" class="form-label">Title ({{ $language->name }}) *</label>
-                                            <input type="text" class="form-control" name="content_{{ $language->code }}[title]" 
-                                                   value="{{ old('content_' . $language->code . '.title') }}" required>
+                                            <input type="text" class="form-control contact-required" name="content_{{ $language->code }}[title]" 
+                                                   value="{{ old('content_' . $language->code . '.title') }}">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -250,6 +251,23 @@
                                 </div>
                             </div>
 
+                            <!-- Site Logo Form -->
+                            <div class="content-form" data-type="site_logo" style="display: none;">
+                                <div class="mb-3">
+                                    <label for="logo_url_{{ $language->code }}" class="form-label">Logo URL</label>
+                                    <input type="url" class="form-control" name="content_{{ $language->code }}[logo_url]" 
+                                           value="{{ old('content_' . $language->code . '.logo_url') }}"
+                                           placeholder="https://example.com/logo.png">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="alt_text_{{ $language->code }}" class="form-label">Alt Text ({{ $language->name }})</label>
+                                    <input type="text" class="form-control" name="content_{{ $language->code }}[alt_text]" 
+                                           value="{{ old('content_' . $language->code . '.alt_text') }}"
+                                           placeholder="Site Logo">
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 @endforeach
@@ -272,9 +290,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const contentForms = document.querySelectorAll('.content-form');
     
     function showContentForm(contentType) {
-        // Hide all forms first
+        // Hide all forms first and remove required attributes
         contentForms.forEach(form => {
             form.style.display = 'none';
+            // Remove required from hidden fields
+            form.querySelectorAll('input, textarea').forEach(field => {
+                field.removeAttribute('required');
+            });
         });
         
         // Show the appropriate form based on content type
@@ -282,6 +304,25 @@ document.addEventListener('DOMContentLoaded', function() {
             const formTypes = form.dataset.type.split(' ');
             if (formTypes.includes(contentType) || (contentType === 'custom' && formTypes.includes('default'))) {
                 form.style.display = 'block';
+                
+                // Add required attributes to visible required fields
+                if (contentType === 'hero') {
+                    form.querySelectorAll('.hero-required').forEach(field => {
+                        field.setAttribute('required', 'required');
+                    });
+                } else if (contentType === 'take_action') {
+                    form.querySelectorAll('.take-action-required').forEach(field => {
+                        field.setAttribute('required', 'required');
+                    });
+                } else if (contentType === 'about_us' || contentType === 'our_vision') {
+                    form.querySelectorAll('.section-required').forEach(field => {
+                        field.setAttribute('required', 'required');
+                    });
+                } else if (contentType === 'contact_us') {
+                    form.querySelectorAll('.contact-required').forEach(field => {
+                        field.setAttribute('required', 'required');
+                    });
+                }
             }
         });
     }
@@ -325,15 +366,23 @@ document.addEventListener('DOMContentLoaded', function() {
         if (selectedValue === 'hero') {
             // Set default hero values if needed
             document.querySelectorAll('input[name*="[title]"]').forEach(input => {
-                if (input.value === '') {
+                if (input.value === '' && input.closest('.content-form[data-type="hero"]')) {
                     const lang = input.name.includes('content_en') ? 'en' : 'ar';
                     input.value = lang === 'en' ? 'Welcome to Our Website' : 'مرحباً بكم في موقعنا';
+                }
+            });
+        } else if (selectedValue === 'take_action') {
+            // Set default take action values
+            document.querySelectorAll('input[name*="[title]"]').forEach(input => {
+                if (input.value === '' && input.closest('.content-form[data-type="take_action"]')) {
+                    const lang = input.name.includes('content_en') ? 'en' : 'ar';
+                    input.value = lang === 'en' ? 'Take Action' : 'اتخذ إجراء';
                 }
             });
         } else if (selectedValue === 'contact_us') {
             // Set default contact title
             document.querySelectorAll('input[name*="[title]"]').forEach(input => {
-                if (input.value === '') {
+                if (input.value === '' && input.closest('.content-form[data-type="contact_us"]')) {
                     const lang = input.name.includes('content_en') ? 'en' : 'ar';
                     input.value = lang === 'en' ? 'Contact Us' : 'تواصل معنا';
                 }

@@ -24,7 +24,129 @@
     @if(app()->getLocale() === 'ar')
         <link href="{{ asset('css/rtl.css') }}" rel="stylesheet">
     @endif
+
+    <!-- Language Switcher Styles -->
+    <style>
+        .language-switcher {
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.1), rgba(0, 86, 179, 0.1));
+            border: 2px solid rgba(0, 123, 255, 0.2);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .language-switcher:hover {
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.15), rgba(0, 86, 179, 0.15));
+            border-color: rgba(0, 123, 255, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+            text-decoration: none;
+        }
+        
+        .language-switcher:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+        
+        .current-lang {
+            color: #007bff;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .lang-separator {
+            width: 1px;
+            height: 20px;
+            background: linear-gradient(to bottom, transparent, rgba(0, 123, 255, 0.3), transparent);
+            opacity: 0.6;
+        }
+        
+        .other-lang {
+            color: #6c757d;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .language-switcher:hover .other-lang {
+            color: #007bff;
+        }
+        
+        .lang-flag {
+            font-size: 1.1rem;
+            filter: grayscale(0);
+            transition: all 0.3s ease;
+        }
+        
+        .other-lang .lang-flag {
+            filter: grayscale(0.5);
+            opacity: 0.7;
+        }
+        
+        .language-switcher:hover .other-lang .lang-flag {
+            filter: grayscale(0);
+            opacity: 1;
+        }
+        
+        .switch-arrow {
+            color: #007bff;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .language-switcher:hover .switch-arrow {
+            transform: translateX(2px);
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 991.98px) {
+            .language-switcher {
+                width: 100%;
+                justify-content: center;
+                margin-top: 0.5rem;
+                padding: 0.75rem 1rem;
+            }
+        }
+        
+        /* RTL support */
+        [dir="rtl"] .language-switcher:hover .switch-arrow {
+            transform: translateX(-2px);
+        }
+        
+        /* Animation for language switch */
+        .lang-switch-animation {
+            position: relative;
+        }
+        
+        .lang-switch-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .language-switcher:hover.lang-switch-animation::before {
+            left: 100%;
+        }
+    </style>
 </head>
+
 <body>
     <!-- Header -->
     <header class="header fixed-top">
@@ -68,24 +190,34 @@
                             </a>
                         </li>
                         
-                        <!-- Language Switcher -->
-                        <li class="nav-item dropdown ms-3">
-                            <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-globe me-1"></i>
-                                @php
-                                    $currentLang = \App\Models\Language::where('code', app()->getLocale())->first();
-                                @endphp
-                                {{ $currentLang ? $currentLang->name : 'Language' }}
+                        <!-- Language Switcher Toggle -->
+                        <li class="nav-item ms-3">
+                            @php
+                                $currentLang = app()->getLocale();
+                                $otherLang = $currentLang === 'ar' ? 'en' : 'ar';
+                                $currentLangName = $currentLang === 'ar' ? 'العربية' : 'English';
+                                $otherLangName = $otherLang === 'ar' ? 'العربية' : 'English';
+                            @endphp
+                            
+                            <a href="{{ route('lang.switch', $otherLang) }}" 
+                               class="language-switcher lang-switch-animation"
+                               title="{{ __('Switch to') }} {{ $otherLangName }}">
+                                <!-- Current Language -->
+                                <div class="current-lang">
+                                    <span>{{ $currentLangName }}</span>
+                                </div>
+                                
+                                <!-- Separator -->
+                                <div class="lang-separator"></div>
+                                
+                                <!-- Switch Arrow -->
+                                <i class="fas fa-exchange-alt switch-arrow"></i>
+                                
+                                <!-- Other Language -->
+                                <div class="other-lang">
+                                    <span>{{ $otherLangName }}</span>
+                                </div>
                             </a>
-                            <ul class="dropdown-menu">
-                                @foreach(\App\Models\Language::getActive() as $language)
-                                    <li>
-                                        <a class="dropdown-item" href="{{ route('lang.switch', $language->code) }}">
-                                            {{ $language->name }}
-                                        </a>
-                                    </li>
-                                @endforeach
-                            </ul>
                         </li>
                     </ul>
                 </div>
@@ -134,9 +266,28 @@
     <script src="{{ asset('js/app.js') }}"></script>
     
     <script>
+        // Initialize AOS
         AOS.init({
             duration: 1000,
             once: true
+        });
+
+        // Add smooth transition effect on language switch
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageSwitcher = document.querySelector('.language-switcher');
+            
+            if (languageSwitcher) {
+                languageSwitcher.addEventListener('click', function(e) {
+                    // Add loading state
+                    this.style.opacity = '0.7';
+                    this.style.transform = 'scale(0.98)';
+                    
+                    // Optional: Add a small delay for visual feedback
+                    setTimeout(() => {
+                        // Navigation will proceed automatically
+                    }, 150);
+                });
+            }
         });
     </script>
     

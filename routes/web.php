@@ -25,6 +25,11 @@ Route::get('/story/{id}', [StoryController::class, 'show'])->name('story.show');
 Route::get('/lang/{code}', [LanguageController::class, 'switch'])->name('lang.switch');
 Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('login');
     Route::post('login', [AdminAuthController::class, 'login']);
+    // Add this route for video streaming
+Route::get('/video/{filename}', [App\Http\Controllers\VideoStreamController::class, 'stream'])
+    ->name('video.stream')
+    ->where('filename', '.*\.(mp4|webm|ogg)$');
+
 // Admin Auth Routes
 Route::prefix('admin')->name('admin.')->group(function () {
     
@@ -38,8 +43,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('contents', ContentController::class);
         
         // Media Management
-        Route::resource('media', AdminMediaController::class);
-        
+Route::resource('media', AdminMediaController::class)->parameters([
+            'media' => 'medium'
+        ]);        
         // Stories Management
         Route::resource('stories', AdminStoryController::class);
         

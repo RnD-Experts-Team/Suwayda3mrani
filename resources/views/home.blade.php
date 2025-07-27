@@ -32,16 +32,17 @@
                 <div class="col-6 col-md-3 mb-4" data-aos="zoom-in" data-aos-delay="{{ $loop->index * 100 }}">
                     <div class="counter-item text-center">
                         <div class="counter-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                            @if($counter->icon)
+                            @if($counter->type === 'image' && $counter->image_url)
+                                <img src="{{ $counter->image_url }}" alt="{{ $counter->getTitle(app()->getLocale()) }}" class="counter-image">
+                            @elseif($counter->type === 'icon' && $counter->icon)
                                 <i class="{{ $counter->icon }} fa-2x text-primary"></i>
                             @else
-                                <span class="counter-number display-4 fw-bold text-primary">{{ $counter->count }}</span>
+                                <!-- Fallback: show icon placeholder -->
+                                <i class="fas fa-chart-line fa-2x text-primary"></i>
                             @endif
                         </div>
                         <h5 class="counter-title">{{ $counter->getTitle(app()->getLocale()) }}</h5>
-                        @if($counter->icon)
-                            <div class="counter-number display-6 fw-bold text-primary">{{ number_format($counter->count) }}</div>
-                        @endif
+                        <div class="counter-number display-6 fw-bold text-primary" data-target="{{ $counter->count }}">0</div>
                     </div>
                 </div>
             @endforeach
@@ -84,32 +85,32 @@
         <div class="media-scroll-container" data-aos="fade-up" data-aos-delay="400">
             <div class="media-scroll d-flex">
                 @foreach($data['mediaItems'] as $media)
-                    <div class="media-item flex-shrink-0 me-3">
-                        <div class="media-card position-relative overflow-hidden rounded" 
-                             data-bs-toggle="modal" 
-                             data-bs-target="#homeMediaModal"
-                             data-src="{{ $media->media_url }}"
-                             data-type="{{ $media->type }}"
-                             data-title="{{ $media->getTitle(app()->getLocale()) }}"
-                             style="cursor: pointer;">
-                            @if($media->type === 'video')
-                                <video class="w-100 h-100 object-cover" muted preload="metadata" poster="{{ $media->media_url }}#t=1">
-                                    <source src="{{ $media->media_url }}" type="video/mp4">
-                                </video>
-                                <div class="play-overlay position-absolute top-50 start-50 translate-middle">
-                                    <div class="play-button">
-                                        <i class="fas fa-play text-white fa-2x"></i>
-                                    </div>
-                                </div>
-                            @else
-                                <img src="{{ $media->media_url }}" alt="{{ $media->getTitle(app()->getLocale()) }}" class="w-100 h-100 object-cover">
-                            @endif
-                            <div class="media-overlay position-absolute bottom-0 start-0 w-100 p-3">
-                                <h6 class="text-white mb-0">{{ $media->getTitle(app()->getLocale()) }}</h6>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
+    <div class="media-item flex-shrink-0 me-3">
+        <div class="media-card position-relative overflow-hidden rounded" 
+             style="cursor: pointer;"
+             onclick="showHomePreview('{{ addslashes($media->getTitle(app()->getLocale())) }}', '{{ $media->type }}', '{{ $media->media_url }}', '{{ addslashes($media->getDescription(app()->getLocale()) ?? '') }}')">
+             
+            @if($media->type === 'video')
+                <div class="d-flex align-items-center justify-content-center bg-dark text-white rounded" style="width: 100%; height: 100%;">
+                    <i class="fas fa-video fa-lg"></i>
+                </div>
+            @else
+                <img src="{{ $media->media_url }}" 
+                     alt="{{ $media->getTitle(app()->getLocale()) }}" 
+                     class="w-100 h-100 object-cover"
+                     loading="lazy"
+                     onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4=';">
+            @endif
+            
+            <div class="media-overlay position-absolute bottom-0 start-0 w-100 p-3">
+                <h6 class="text-white mb-1">{{ $media->getTitle(app()->getLocale()) }}</h6>
+                @if($media->getDescription(app()->getLocale()))
+                    <p class="text-white-50 small mb-0">{{ Str::limit($media->getDescription(app()->getLocale()), 50) }}</p>
+                @endif
+            </div>
+        </div>
+    </div>
+@endforeach
             </div>
         </div>
         
@@ -120,31 +121,91 @@
 </section>
 
 <!-- Stories Section -->
-<section class="stories-section py-5">
+<section id="stories" class="stories-section py-5">
     <div class="container">
         <div class="text-center mb-5">
             <h2 class="display-5 fw-bold" data-aos="fade-up">{{ trans_dynamic('section.stories_of_hope', app()->getLocale()) }}</h2>
             <p class="lead text-muted" data-aos="fade-up" data-aos-delay="200">{{ trans_dynamic('section.stories_desc', app()->getLocale()) }}</p>
         </div>
         
-        <div class="stories-scroll-container" data-aos="fade-up" data-aos-delay="400">
+        <!-- Desktop: Horizontal Scroll -->
+        <div class="stories-scroll-container d-none d-md-block" data-aos="fade-up" data-aos-delay="400">
             <div class="stories-scroll d-flex">
                 @foreach($data['stories'] as $story)
                     <div class="story-item flex-shrink-0 me-4">
-                        <div class="story-card">
-                            <img src="{{ $story->image_url }}" alt="{{ $story->getTitle(app()->getLocale()) }}" class="story-image">
+                        <div class="story-card h-100">
+                            <div class="story-image-container">
+                                <img src="{{ $story->image_url }}" 
+                                     alt="{{ $story->getTitle(app()->getLocale()) }}" 
+                                     class="story-image"
+                                     loading="lazy"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==';">
+                                <div class="story-overlay">
+                                    <div class="story-date">
+                                        <i class="fas fa-calendar-alt me-2"></i>
+                                        {{ $story->created_at->format('M d, Y') }}
+                                    </div>
+                                </div>
+                            </div>
                             <div class="story-content p-4">
                                 <h5 class="story-title mb-3">{{ $story->getTitle(app()->getLocale()) }}</h5>
-                                <p class="story-excerpt text-muted mb-3">{{ $story->getExcerpt(app()->getLocale()) }}</p>
-                                <a href="{{ route('story.show', $story->id) }}" class="btn btn-sm btn-outline-primary">
-                                    {{ trans_dynamic('button.view_full_story', app()->getLocale()) }}
-                                </a>
+                                <p class="story-excerpt text-muted mb-4">{{ $story->getExcerpt(app()->getLocale(), 120) }}</p>
+                                <div class="story-actions d-flex justify-content-between align-items-center">
+                                    <a href="{{ route('story.show', $story->id) }}" class="btn btn-outline-primary btn-sm story-btn">
+                                        <i class="fas fa-book-open me-2"></i>
+                                        {{ trans_dynamic('button.read_story', app()->getLocale()) }}
+                                    </a>
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock me-1"></i>
+                                        {{ ceil(str_word_count(strip_tags($story->getContent(app()->getLocale()))) / 200) }} min read
+                                    </small>
+                                </div>
                             </div>
                         </div>
                     </div>
                 @endforeach
             </div>
         </div>
+        
+        <!-- Mobile: Grid Layout -->
+<div class="stories-grid-container d-md-none" data-aos="fade-up" data-aos-delay="400">
+    <div class="row mx-0">  <!-- Added mx-0 to remove horizontal margins -->
+        @foreach($data['stories']->take(3) as $story)
+            <div class="col-12 px-0">  <!-- Added px-0 to remove horizontal padding -->
+                <div class="story-card-mobile">
+                    <div class="story-image-mobile">
+                        <img src="{{ $story->image_url }}" 
+                             class="story-image-mobile-img" 
+                             alt="{{ $story->getTitle(app()->getLocale()) }}"
+                             loading="lazy">
+                    </div>
+                    <div class="story-content-mobile">
+                        <h6 class="story-title-mobile">{{ Str::limit($story->getTitle(app()->getLocale()), 50) }}</h6>
+                        <p class="story-excerpt-mobile">{{ $story->getExcerpt(app()->getLocale(), 80) }}</p>
+                        <div class="story-meta-mobile">
+                             <a href="{{ route('story.show', $story->id) }}" class="btn btn-outline-primary btn-xs">
+                                                {{ trans_dynamic('button.read_more', app()->getLocale()) }}
+                                            </a>
+                                            <small class="text-muted">
+                                                {{ $story->created_at->format('M d') }}
+                                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+</div>
+        
+        <!-- View All Stories Button -->
+        @if($data['stories']->count() > 3)
+            <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="600">
+                <a href="{{ route('stories.index') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-book me-2"></i>
+                    {{ trans_dynamic('button.view_all_stories', app()->getLocale()) }}
+                </a>
+            </div>
+        @endif
     </div>
 </section>
 
@@ -180,50 +241,122 @@
     </div>
 </section>
 
-<!-- Home Media Modal -->
-<div class="modal fade" id="homeMediaModal" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="homeMediaModalTitle"></h5>
+<!-- Home Media Preview Modal with White Background -->
+<div class="modal fade" id="homePreviewModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-white">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title text-dark">Media Preview</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body p-0">
-                <div id="homeMediaModalContent"></div>
+            <div class="modal-body p-0 bg-white" id="homePreviewContent">
+                <!-- Preview content will be loaded here -->
+            </div>
+            <div class="modal-footer border-top bg-light" id="homePreviewFooter" style="display: none;">
+                <div class="w-100">
+                    <h6 class="mb-2 text-dark" id="homePreviewDescTitle"></h6>
+                    <div class="description-content bg-white border rounded p-3" id="homePreviewDescription"></div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
 
+{{-- Update the script section in resources/views/home.blade.php --}}
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Home media modal functionality
-    const homeMediaModal = document.getElementById('homeMediaModal');
-    const homeModalTitle = document.getElementById('homeMediaModalTitle');
-    const homeModalContent = document.getElementById('homeMediaModalContent');
-    
-    document.querySelectorAll('.media-card').forEach(card => {
-        card.addEventListener('click', function() {
-            const src = this.dataset.src;
-            const type = this.dataset.type;
-            const title = this.dataset.title;
-            
-            homeModalTitle.textContent = title;
-            
-            if (type === 'video') {
-                homeModalContent.innerHTML = `<video src="${src}" class="w-100" controls autoplay muted></video>`;
-            } else {
-                homeModalContent.innerHTML = `<img src="${src}" alt="${title}" class="w-100">`;
-            }
+    // Counter Animation (existing code)
+    function animateCounters() {
+        const counters = document.querySelectorAll('.counter-number');
+        
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
+                    entry.target.classList.add('animated');
+                    animateCounter(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        counters.forEach(counter => {
+            observer.observe(counter);
         });
-    });
+    }
+
+    function animateCounter(element) {
+        const target = parseInt(element.getAttribute('data-target'));
+        const duration = 2000;
+        const startTime = performance.now();
+        
+        function updateCounter(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+            const current = Math.floor(easeOut * target);
+            
+            element.textContent = current.toLocaleString();
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            } else {
+                element.textContent = target.toLocaleString();
+            }
+        }
+        
+        requestAnimationFrame(updateCounter);
+    }
+
+    animateCounters();
     
-    // Clean up video when modal closes
-    homeMediaModal.addEventListener('hidden.bs.modal', function() {
-        homeModalContent.innerHTML = '';
-    });
+    // UPDATED PREVIEW FUNCTION WITH TITLE AND DESCRIPTION
+    window.showHomePreview = function(title, type, url, description = '') {
+        const modal = new bootstrap.Modal(document.getElementById('homePreviewModal'));
+        const modalTitle = document.querySelector('#homePreviewModal .modal-title');
+        const previewContent = document.getElementById('homePreviewContent');
+        const previewFooter = document.getElementById('homePreviewFooter');
+        const previewDescTitle = document.getElementById('homePreviewDescTitle');
+        const previewDescription = document.getElementById('homePreviewDescription');
+        
+        modalTitle.textContent = title;
+        
+        // Show/hide footer based on description
+        if (description && description.trim() !== '') {
+            previewFooter.style.display = 'block';
+            previewDescTitle.textContent = title;
+            previewDescription.innerHTML = description;
+        } else {
+            previewFooter.style.display = 'none';
+        }
+        
+        if (type === 'image') {
+            previewContent.innerHTML = `
+                <div class="text-center p-3">
+                    <img src="${url}" class="img-fluid rounded" style="max-height: 70vh; max-width: 100%;" 
+                         onerror="this.onerror=null; this.outerHTML='<div class=\\'alert alert-danger\\'>Failed to load image</div>';">
+                </div>
+            `;
+        } else {
+            previewContent.innerHTML = `
+                <div class="text-center p-3">
+                    <video controls class="rounded" style="max-height: 70vh; max-width: 100%;" preload="metadata">
+                        <source src="${url}" type="video/mp4">
+                        <source src="${url}" type="video/webm">
+                        <source src="${url}" type="video/ogg">
+                        <p class="text-danger">Your browser doesn't support video playback.</p>
+                    </video>
+                </div>
+            `;
+        }
+        
+        modal.show();
+    };
 });
 </script>
 @endpush

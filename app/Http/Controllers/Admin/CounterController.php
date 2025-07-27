@@ -24,9 +24,12 @@ class CounterController extends Controller
     {
         $request->validate([
             'count' => 'required|integer|min:0',
+            'type' => 'required|in:icon,image',
+            'icon' => 'required_if:type,icon',
+            'image_url' => 'required_if:type,image|url',
         ]);
 
-        $data = $request->only(['count', 'icon', 'sort_order']);
+        $data = $request->only(['count', 'icon', 'image_url', 'type', 'sort_order']);
         $data['is_active'] = $request->has('is_active');
         
         // Handle multilingual titles
@@ -50,9 +53,12 @@ class CounterController extends Controller
     {
         $request->validate([
             'count' => 'required|integer|min:0',
+            'type' => 'required|in:icon,image',
+            'icon' => 'required_if:type,icon',
+            'image_url' => 'required_if:type,image|url',
         ]);
 
-        $data = $request->only(['count', 'icon', 'sort_order']);
+        $data = $request->only(['count', 'icon', 'image_url', 'type', 'sort_order']);
         $data['is_active'] = $request->has('is_active');
         
         // Handle multilingual titles

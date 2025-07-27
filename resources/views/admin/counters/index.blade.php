@@ -17,7 +17,8 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Icon</th>
+                        <th>Display</th>
+                        <th>Type</th>
                         <th>Title</th>
                         <th>Count</th>
                         <th>Sort Order</th>
@@ -29,11 +30,18 @@
                     @forelse($counters as $counter)
                         <tr>
                             <td class="text-center">
-                                @if($counter->icon)
+                                @if($counter->type === 'image' && $counter->image_url)
+                                    <img src="{{ $counter->image_url }}" alt="Counter" class="img-fluid" style="max-width: 40px; max-height: 40px;">
+                                @elseif($counter->type === 'icon' && $counter->icon)
                                     <i class="{{ $counter->icon }} fa-2x text-primary"></i>
                                 @else
-                                    <span class="text-muted">No icon</span>
+                                    <span class="text-muted">No display</span>
                                 @endif
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ $counter->type === 'image' ? 'success' : 'info' }}">
+                                    {{ ucfirst($counter->type) }}
+                                </span>
                             </td>
                             <td>{{ $counter->title_en }}</td>
                             <td>
@@ -62,7 +70,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center">No counters found</td>
+                            <td colspan="7" class="text-center">No counters found</td>
                         </tr>
                     @endforelse
                 </tbody>

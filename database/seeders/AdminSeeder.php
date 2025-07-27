@@ -96,6 +96,22 @@ class AdminSeeder extends Seeder
         'logo_url' => '',
         'alt_text' => 'شعار الموقع'
     ]
+    ],
+    'take_action' => [
+    'content_en' => [
+        'title' => 'Make a Difference Today',
+        'subtitle' => 'Join us in our mission to create positive change in our community. Your support can help us reach more people and make a lasting impact.',
+        'image' => 'https://via.placeholder.com/600x400/4CAF50/ffffff?text=Take+Action',
+        'button_text' => 'Get Involved',
+        'button_url' => '#contact'
+    ],
+    'content_ar' => [
+        'title' => 'أحدث فرقاً اليوم',
+        'subtitle' => 'انضم إلينا في مهمتنا لإحداث تغيير إيجابي في مجتمعنا. يمكن لدعمكم أن يساعدنا في الوصول إلى المزيد من الناس وإحداث تأثير دائم.',
+        'image' => 'https://via.placeholder.com/600x400/4CAF50/ffffff?text=اتخذ+إجراء',
+        'button_text' => 'شارك معنا',
+        'button_url' => '#contact'
+    ]
 ]
         ];
 
@@ -176,6 +192,9 @@ class AdminSeeder extends Seeder
     
     // Additional buttons
     'button.learn_more' => ['en' => 'Learn More', 'ar' => 'اعرف المزيد'],
+
+    'media.no_media_found' => ['en' => 'No media found', 'ar' => 'لم يتم العثور على وسائط'],
+'media.no_media_desc' => ['en' => 'Start by adding your first media item', 'ar' => 'ابدأ بإضافة أول عنصر وسائط'],
     ];
 
     foreach ($translations as $key => $values) {
