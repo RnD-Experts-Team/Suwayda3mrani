@@ -19,11 +19,11 @@
                         @if($medium->type === 'image')
                             <img src="{{ $medium->media_url }}" alt="Current media" class="img-fluid" 
                                  style="max-height: 200px; cursor: pointer;"
-                                 onclick="showPreview('{{ $medium->getTitle('en') }}', '{{ $medium->type }}', '{{ $medium->media_url }}')">
+                                 onclick="showPreview('{{ addslashes($medium->getTitle('en')) }}', '{{ $medium->type }}', '{{ $medium->media_url }}')">
                         @else
                             <div class="d-flex align-items-center justify-content-center bg-dark text-white rounded" 
                                  style="height: 150px; cursor: pointer;"
-                                 onclick="showPreview('{{ $medium->getTitle('en') }}', '{{ $medium->type }}', '{{ $medium->media_url }}')">
+                                 onclick="showPreview('{{ addslashes($medium->getTitle('en')) }}', '{{ $medium->type }}', '{{ $medium->media_url }}')">
                                 <i class="fas fa-video fa-3x"></i>
                             </div>
                         @endif
@@ -36,8 +36,13 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="media_url" class="form-label">Media URL *</label>
-                        <input type="url" class="form-control @error('media_url') is-invalid @enderror" 
-                               name="media_url" value="{{ old('media_url', $medium->media_url) }}" required>
+                        <input type="text" class="form-control @error('media_url') is-invalid @enderror" 
+                               name="media_url" value="{{ old('media_url', $medium->media_url) }}" required
+                               placeholder="Enter URL or Google Drive ID">
+                        <div class="form-text">
+                            <strong>For Images:</strong> Enter full image URL<br>
+                            <strong>For Videos:</strong> Enter Google Drive ID or full video URL
+                        </div>
                         @error('media_url')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -129,21 +134,14 @@
 </div>
 @endsection
 
-{{-- Alternative robust script for resources/views/admin/media/edit.blade.php --}}
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Enhanced preview function with error handling
     window.showPreview = function(title, type, url) {
         try {
             const modal = new bootstrap.Modal(document.getElementById('previewModal'));
             const modalTitle = document.querySelector('#previewModal .modal-title');
             const previewContent = document.getElementById('previewContent');
-            
-            if (!modalTitle || !previewContent) {
-                console.error('Modal elements not found');
-                return;
-            }
             
             modalTitle.textContent = `Preview: ${title}`;
             
@@ -155,59 +153,46 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 `;
             } else if (type === 'video') {
-                previewContent.innerHTML = `
-                    <div class="text-center p-3">
-                        <video controls class="rounded" style="max-height: 70vh; max-width: 100%;" preload="metadata">
-                            <source src="${url}" type="video/mp4">
-                            <source src="${url}" type="video/webm">
-                            <source src="${url}" type="video/ogg">
-                            <p class="text-danger">Your browser doesn't support video playback.</p>
-                        </video>
-                    </div>
-                `;
-            } else {
-                previewContent.innerHTML = `
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        Unknown media type: ${type}
-                    </div>
-                `;
+                // Check if it's a Google Drive ID
+                if (isGoogleDriveId(url)) {
+                    previewContent.innerHTML = `
+                        <div class="text-center p-3">
+                            <iframe 
+                                src="https://drive.google.com/file/d/${url}/preview"
+                                width="100%"
+                                height="500"
+                                style="border: none; border-radius: 8px;"
+                                allow="autoplay">
+                            </iframe>
+                        </div>
+                    `;
+                } else {
+                    previewContent.innerHTML = `
+                        <div class="text-center p-3">
+                            <video controls class="rounded" style="max-height: 70vh; max-width: 100%;" preload="metadata">
+                                <source src="${url}" type="video/mp4">
+                                <source src="${url}" type="video/webm">
+                                <source src="${url}" type="video/ogg">
+                                <p class="text-danger">Your browser doesn't support video playback.</p>
+                            </video>
+                        </div>
+                    `;
+                }
             }
             
             modal.show();
-            console.log('Preview shown for:', title, type);
             
         } catch (error) {
             console.error('Error showing preview:', error);
             alert('Error showing preview. Please check the console for details.');
         }
     };
-
-    // Clean up function
-    function cleanupModal() {
-        const previewContent = document.getElementById('previewContent');
-        if (previewContent) {
-            const video = previewContent.querySelector('video');
-            if (video) {
-                video.pause();
-                video.src = '';
-                video.load();
-            }
-            previewContent.innerHTML = '';
-        }
+    
+    // Helper function to detect Google Drive ID
+    function isGoogleDriveId(url) {
+        const driveIdPattern = /^[a-zA-Z0-9_-]{25,44}$/;
+        return driveIdPattern.test(url) && !url.includes('/') && !url.includes('.');
     }
-
-    // Modal cleanup event
-    const previewModal = document.getElementById('previewModal');
-    if (previewModal) {
-        previewModal.addEventListener('hidden.bs.modal', cleanupModal);
-    }
-
-    // Test function - you can call this in console to test
-    window.testPreview = function() {
-        showPreview('Test Image', 'image', 'https://via.placeholder.com/600x400?text=Test+Image');
-    };
 });
 </script>
 @endpush
-

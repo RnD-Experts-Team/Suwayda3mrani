@@ -131,7 +131,6 @@
 </div>
 @endsection
 
-{{-- Update the script section in resources/views/media.blade.php --}}
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -157,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // UPDATED PREVIEW FUNCTION WITH TITLE AND DESCRIPTION
+    // CLEAN PREVIEW FUNCTION WITHOUT EXTRA BUTTONS
     window.showMediaPreview = function(title, type, url, description = '') {
         const modal = new bootstrap.Modal(document.getElementById('mediaPreviewModal'));
         const modalTitle = document.querySelector('#mediaPreviewModal .modal-title');
@@ -180,25 +179,49 @@ document.addEventListener('DOMContentLoaded', function() {
         if (type === 'image') {
             previewContent.innerHTML = `
                 <div class="text-center p-3">
-                    <img src="${url}" class="img-fluid rounded" style="max-height: 70vh; max-width: 100%;" 
+                    <img src="${url}" class="img-fluid rounded" style="max-height: 70vh; max-width: 100%; object-fit: contain;" 
                          onerror="this.onerror=null; this.outerHTML='<div class=\\'alert alert-danger\\'>Failed to load image</div>';">
                 </div>
             `;
         } else {
-            previewContent.innerHTML = `
-                <div class="text-center p-3">
-                    <video controls class="rounded" style="max-height: 70vh; max-width: 100%;" preload="metadata">
-                        <source src="${url}" type="video/mp4">
-                        <source src="${url}" type="video/webm">
-                        <source src="${url}" type="video/ogg">
-                        <p class="text-danger">Your browser doesn't support video playback.</p>
-                    </video>
-                </div>
-            `;
+            // Check if URL is a Google Drive ID or a regular video URL
+            if (isGoogleDriveId(url)) {
+                // It's a Google Drive ID, create iframe
+                previewContent.innerHTML = `
+                    <div class="text-center p-3">
+                        <iframe 
+                            src="https://drive.google.com/file/d/${url}/preview"
+                            width="100%"
+                            height="500"
+                            style="border: none; border-radius: 8px;"
+                            allow="autoplay; fullscreen"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                `;
+            } else {
+                // It's a regular video URL, use video element
+                previewContent.innerHTML = `
+                    <div class="text-center p-3">
+                        <video controls class="rounded" style="max-height: 70vh; max-width: 100%; object-fit: contain;" preload="metadata">
+                            <source src="${url}" type="video/mp4">
+                            <source src="${url}" type="video/webm">
+                            <source src="${url}" type="video/ogg">
+                            <p class="text-danger">Your browser doesn't support video playback.</p>
+                        </video>
+                    </div>
+                `;
+            }
         }
         
         modal.show();
     };
+    
+    // Helper function to detect Google Drive ID
+    function isGoogleDriveId(url) {
+        const driveIdPattern = /^[a-zA-Z0-9_-]{25,44}$/;
+        return driveIdPattern.test(url) && !url.includes('/') && !url.includes('.');
+    }
 });
 
 // Add fadeInUp animation
@@ -218,4 +241,6 @@ style.textContent = `
 document.head.appendChild(style);
 </script>
 @endpush
+
+
 
