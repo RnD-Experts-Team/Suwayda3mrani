@@ -51,7 +51,7 @@
                         <img src="{{ $counter->image_url }}" alt="Current" class="img-fluid" style="max-width: 80px; max-height: 80px;">
                         <p class="mt-2 mb-0 small">Current Image</p>
                     @elseif($counter->type === 'icon' && $counter->icon)
-                        <i class="{{ $counter->icon }} fa-3x text-primary"></i>
+                        <i class="{{ $counter->icon }} fa-3x text-brand"></i>
                         <p class="mt-2 mb-0 small">Current Icon</p>
                     @else
                         <p class="mb-0 text-muted">No display set</p>
@@ -78,7 +78,7 @@
                         <div class="mb-3">
                             <label class="form-label">Icon Preview</label>
                             <div class="border rounded p-3 text-center bg-light">
-                                <i id="iconPreview" class="{{ $counter->icon ?: 'fas fa-users' }} fa-3x text-primary"></i>
+                                <i id="iconPreview" class="{{ $counter->icon ?: 'fas fa-users' }} fa-3x text-brand"></i>
                                 <p class="mt-2 mb-0 small">Preview</p>
                             </div>
                         </div>
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Icon preview
     iconInput.addEventListener('input', function() {
         const iconClass = this.value || 'fas fa-users';
-        iconPreview.className = iconClass + ' fa-3x text-primary';
+        iconPreview.className = iconClass + ' fa-3x text-brand';
     });
     
     // Image preview

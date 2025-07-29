@@ -50,15 +50,15 @@
                     
                     <div class="story-meta-info d-flex flex-wrap justify-content-center gap-4 mb-4">
                         <div class="meta-item">
-                            <i class="fas fa-calendar text-primary me-2"></i>
+                            <i class="fas fa-calendar text-brand me-2"></i>
                             <span class="text-muted">{{ $story->created_at->format('F j, Y') }}</span>
                         </div>
                         <div class="meta-item">
-                            <i class="fas fa-clock text-primary me-2"></i>
+                            <i class="fas fa-clock text-brand me-2"></i>
                             <span class="text-muted">{{ ceil(str_word_count(strip_tags($story->getContent(app()->getLocale()))) / 200) }} min read</span>
                         </div>
                         <div class="meta-item">
-                            <i class="fas fa-eye text-primary me-2"></i>
+                            <i class="fas fa-eye text-brand me-2"></i>
                             <span class="text-muted">{{ rand(150, 500) }} views</span>
                         </div>
                     </div>
@@ -113,48 +113,79 @@
                     ->get();
             @endphp
             
-            @forelse($relatedStories as $relatedStory)
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-                    <div class="related-story-card-small h-100">
-                        <div class="related-story-image-small">
-                            <img src="{{ $relatedStory->image_url }}" 
-                                 class="related-story-img-small" 
-                                 alt="{{ $relatedStory->getTitle(app()->getLocale()) }}"
-                                 loading="lazy"
-                                 onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUwIiBoZWlnaHQ9IjE0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlPC90ZXh0Pjwvc3ZnPg==';">
-                            <div class="related-story-overlay-small">
-                                <div class="related-story-date-small">
-                                    {{ $relatedStory->created_at->format('M d') }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="related-story-content-small p-3">
-                            <h6 class="related-story-title-small mb-2">{{ Str::limit($relatedStory->getTitle(app()->getLocale()), 60) }}</h6>
-                            <p class="related-story-excerpt-small text-muted small mb-3">{{ $relatedStory->getExcerpt(app()->getLocale(), 80) }}</p>
-                            <div class="related-story-footer-small d-flex justify-content-between align-items-center">
-                                <a href="{{ route('story.show', $relatedStory->id) }}" class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-book-open me-1"></i>{{ __('Read') }}
-                                </a>
-                                <small class="text-muted">
-                                    <i class="fas fa-clock me-1"></i>
-                                    {{ ceil(str_word_count(strip_tags($relatedStory->getContent(app()->getLocale()))) / 200) }}m
-                                </small>
-                            </div>
-                        </div>
+           @forelse($relatedStories as $relatedStory)
+    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
+        <div class="related-story-card-small h-100">
+            <div class="related-story-image-small">
+                <img src="{{ $relatedStory->image_url }}" 
+                     class="related-story-img-small" 
+                     alt="{{ $relatedStory->getTitle(app()->getLocale()) }}"
+                     loading="lazy"
+                     onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUwIiBoZWlnaHQ9IjE0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlPC90ZXh0Pjwvc3ZnPg==';">
+                <div class="related-story-overlay-small">
+                    <div class="related-story-date-small">
+                        {{ $relatedStory->created_at->format('M d') }}
                     </div>
                 </div>
-            @empty
-                <div class="col-12">
-                    <div class="text-center py-4">
-                        <i class="fas fa-book-open fa-2x text-muted mb-2"></i>
-                        <h6 class="text-muted mb-1">{{ __('No more stories available') }}</h6>
-                        <p class="text-muted small mb-3">{{ __('Check back soon for more inspiring stories') }}</p>
-                        <a href="{{ route('home') }}#stories" class="btn btn-primary btn-sm">
-                            {{ __('View All Stories') }}
-                        </a>
-                    </div>
+            </div>
+            <div class="related-story-content-small p-3">
+                <h6 class="related-story-title-small mb-2">{{ Str::limit($relatedStory->getTitle(app()->getLocale()), 60) }}</h6>
+                <p class="related-story-excerpt-small text-muted small mb-3">{{ $relatedStory->getExcerpt(app()->getLocale(), 80) }}</p>
+                <div class="related-story-footer-small d-flex justify-content-between align-items-center">
+                    <a href="{{ route('story.show', $relatedStory->id) }}"
+                       style="
+                           background-color: #2f9319;
+                           color: #fff;
+                           padding: 0.4rem 1rem;
+                           font-size: 0.875rem;
+                           font-weight: 600;
+                           border-radius: 6px;
+                           text-decoration: none;
+                           transition: all 0.3s ease;
+                           display: inline-flex;
+                           align-items: center;
+                           gap: 0.5rem;
+                           border: 2px solid #2f9319;
+                       "
+                       onmouseover="this.style.backgroundColor='#267b15'"
+                       onmouseout="this.style.backgroundColor='#2f9319'">
+                        <i class="fas fa-book-open"></i> {{ __('Read') }}
+                    </a>
+                    <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>
+                        {{ ceil(str_word_count(strip_tags($relatedStory->getContent(app()->getLocale()))) / 200) }}m
+                    </small>
                 </div>
-            @endforelse
+            </div>
+        </div>
+    </div>
+@empty
+    <div class="col-12">
+        <div class="text-center py-4">
+            <i class="fas fa-book-open fa-2x text-muted mb-2"></i>
+            <h6 class="text-muted mb-1">{{ __('No more stories available') }}</h6>
+            <p class="text-muted small mb-3">{{ __('Check back soon for more inspiring stories') }}</p>
+            <a href="{{ route('home') }}#stories" 
+               style="
+                   background-color: #2f9319;
+                   color: #fff;
+                   padding: 0.5rem 1.25rem;
+                   font-size: 0.875rem;
+                   font-weight: 600;
+                   border-radius: 6px;
+                   text-decoration: none;
+                   border: 2px solid #2f9319;
+                   display: inline-block;
+                   transition: all 0.3s ease;
+               "
+               onmouseover="this.style.backgroundColor='#267b15'"
+               onmouseout="this.style.backgroundColor='#2f9319'">
+               {{ __('View All Stories') }}
+            </a>
+        </div>
+    </div>
+@endforelse
+
         </div>
     </div>
 </section>

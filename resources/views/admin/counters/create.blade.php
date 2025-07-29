@@ -61,7 +61,7 @@
                         <div class="mb-3">
                             <label class="form-label">Icon Preview</label>
                             <div class="border rounded p-3 text-center bg-light">
-                                <i id="iconPreview" class="fas fa-users fa-3x text-primary"></i>
+                                <i id="iconPreview" class="fas fa-users fa-3x text-brand"></i>
                                 <p class="mt-2 mb-0 small">Preview will appear here</p>
                             </div>
                         </div>
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Icon preview
     iconInput.addEventListener('input', function() {
         const iconClass = this.value || 'fas fa-users';
-        iconPreview.className = iconClass + ' fa-3x text-primary';
+        iconPreview.className = iconClass + ' fa-3x text-brand';
     });
     
     // Image preview

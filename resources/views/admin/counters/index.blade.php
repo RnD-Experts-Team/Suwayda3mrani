@@ -33,7 +33,7 @@
                                 @if($counter->type === 'image' && $counter->image_url)
                                     <img src="{{ $counter->image_url }}" alt="Counter" class="img-fluid" style="max-width: 40px; max-height: 40px;">
                                 @elseif($counter->type === 'icon' && $counter->icon)
-                                    <i class="{{ $counter->icon }} fa-2x text-primary"></i>
+                                    <i class="{{ $counter->icon }} fa-2x text-brand"></i>
                                 @else
                                     <span class="text-muted">No display</span>
                                 @endif

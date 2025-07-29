@@ -35,14 +35,14 @@
                             @if($counter->type === 'image' && $counter->image_url)
                                 <img src="{{ $counter->image_url }}" alt="{{ $counter->getTitle(app()->getLocale()) }}" class="counter-image">
                             @elseif($counter->type === 'icon' && $counter->icon)
-                                <i class="{{ $counter->icon }} fa-2x text-primary"></i>
+                                <i class="{{ $counter->icon }} fa-2x text-brand"></i>
                             @else
                                 <!-- Fallback: show icon placeholder -->
-                                <i class="fas fa-chart-line fa-2x text-primary"></i>
+                                <i class="fas fa-chart-line fa-2x text-brand"></i>
                             @endif
                         </div>
                         <h5 class="counter-title">{{ $counter->getTitle(app()->getLocale()) }}</h5>
-                        <div class="counter-number display-6 fw-bold text-primary" data-target="{{ $counter->count }}">0</div>
+                        <div class="counter-number display-6 fw-bold text-brand" data-target="{{ $counter->count }}">0</div>
                     </div>
                 </div>
             @endforeach
@@ -151,10 +151,29 @@
                                 <h5 class="story-title mb-3">{{ $story->getTitle(app()->getLocale()) }}</h5>
                                 <p class="story-excerpt text-muted mb-4">{{ $story->getExcerpt(app()->getLocale(), 120) }}</p>
                                 <div class="story-actions d-flex justify-content-between align-items-center">
-                                    <a href="{{ route('story.show', $story->id) }}" class="btn btn-outline-primary btn-sm story-btn">
-                                        <i class="fas fa-book-open me-2"></i>
-                                        {{ trans_dynamic('button.read_story', app()->getLocale()) }}
-                                    </a>
+                                    <a href="{{ route('story.show', $story->id) }}" 
+   class="story-btn-custom"
+   style="
+       display: inline-flex;
+       align-items: center;
+       gap: 0.5rem;
+       font-size: 0.875rem;
+       font-weight: 600;
+       padding: 0.5rem 1rem;
+       border: 2px solid #2f9319;
+       border-radius: 8px;
+       background-color: #2f9319;
+       color: white;
+       text-decoration: none;
+       transition: all 0.3s ease;
+   "
+   onmouseover="this.style.backgroundColor='#2f9319'; this.style.color='white';"
+   onmouseout="this.style.backgroundColor='#2f9319'; this.style.color='white';"
+>
+    <i class="fas fa-book-open"></i>
+    {{ trans_dynamic('button.read_story', app()->getLocale()) }}
+</a>
+
                                     <small class="text-muted">
                                         <i class="fas fa-clock me-1"></i>
                                         {{ ceil(str_word_count(strip_tags($story->getContent(app()->getLocale()))) / 200) }} min read
@@ -183,9 +202,29 @@
                         <h6 class="story-title-mobile">{{ Str::limit($story->getTitle(app()->getLocale()), 50) }}</h6>
                         <p class="story-excerpt-mobile">{{ $story->getExcerpt(app()->getLocale(), 80) }}</p>
                         <div class="story-meta-mobile">
-                             <a href="{{ route('story.show', $story->id) }}" class="btn btn-outline-primary btn-xs">
-                                                {{ trans_dynamic('button.read_more', app()->getLocale()) }}
-                                            </a>
+                             <a href="{{ route('story.show', $story->id) }}" 
+   class="story-btn-custom"
+   style="
+       display: inline-flex;
+       align-items: center;
+       gap: 0.5rem;
+       font-size: 0.875rem;
+       font-weight: 600;
+       padding: 0.5rem 1rem;
+       border: 2px solid #2f9319;
+       border-radius: 8px;
+       background-color: #2f9319;
+       color: white;
+       text-decoration: none;
+       transition: all 0.3s ease;
+   "
+   onmouseover="this.style.backgroundColor='#2f9319'; this.style.color='white';"
+   onmouseout="this.style.backgroundColor='#2f9319'; this.style.color='white';"
+>
+    <i class="fas fa-book-open"></i>
+    {{ trans_dynamic('button.read_story', app()->getLocale()) }}
+</a>
+
                                             <small class="text-muted">
                                                 {{ $story->created_at->format('M d') }}
                                             </small>

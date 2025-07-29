@@ -15,4 +15,14 @@ class SocialIcon extends Model
             ->orderBy('sort_order')
             ->get();
     }
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+    // Optional: Add a mutator to handle the conversion
+    public function setIsActiveAttribute($value)
+    {
+        $this->attributes['is_active'] = $value === 'on' || $value === '1' || $value === 1 || $value === true ? 1 : 0;
+    }
 }

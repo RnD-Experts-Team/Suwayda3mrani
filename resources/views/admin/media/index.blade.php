@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     video.load();
                 }
                 
-                previewContent.innerHTML = '<div class="d-flex align-items-center justify-content-center h-100"><div class="spinner-border text-primary" role="status"></div></div>';
+                previewContent.innerHTML = '<div class="d-flex align-items-center justify-content-center h-100"><div class="spinner-border text-brand" role="status"></div></div>';
             }
         });
     }
