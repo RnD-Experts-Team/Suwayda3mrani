@@ -41,16 +41,16 @@
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered">
+            <table class="table">
                 <thead>
                     <tr>
-                        <th width="80">Preview</th>
-                        <th>Title</th>
-                        <th>Type</th>
-                        <th>URL/ID</th>
-                        <th>Status</th>
-                        <th>Created</th>
-                        <th width="120">Actions</th>
+                        <th class="text-center" width="80">Preview</th>
+                        <th class="text-center">Title</th>
+                        <th class="text-center">Type</th>
+                        <th class="text-center">URL/ID</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Created</th>
+                        <th class="text-center" width="120">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -82,13 +82,13 @@
                                     </div>
                                 @endif
                             </td>
-                            <td>
+                            <td class="text-center">
                                 <strong>{{ $item->title_en }}</strong>
                                 @if($item->title_ar)
                                     <br><small class="text-muted">{{ $item->title_ar }}</small>
                                 @endif
                             </td>
-                            <td>
+                            <td class="text-center">
                                 <span class="badge bg-{{ $item->type === 'image' ? 'success' : 'danger' }}">
                                     <i class="fas fa-{{ $item->type === 'image' ? 'image' : 'video' }} me-1"></i>
                                     {{ ucfirst($item->type) }}
@@ -97,7 +97,7 @@
                                     <br><small class="badge bg-info mt-1">Google Drive</small>
                                 @endif
                             </td>
-                            <td>
+                            <td class="text-center">
                                 @if($item->type === 'video' && preg_match('/^[a-zA-Z0-9_-]{25,44}$/', $item->media_url) && !str_contains($item->media_url, '/') && !str_contains($item->media_url, '.'))
                                     {{-- It's a Google Drive ID --}}
                                     <div class="d-flex align-items-center">
@@ -117,16 +117,16 @@
                                     </a>
                                 @endif
                             </td>
-                            <td>
+                            <td class="text-center">
                                 @if($item->is_active)
                                     <span class="badge bg-success">Active</span>
                                 @else
                                     <span class="badge bg-danger">Inactive</span>
                                 @endif
                             </td>
-                            <td>{{ $item->created_at->format('M d, Y') }}</td>
-                            <td>
-                                <div class="btn-group" role="group">
+                            <td class="text-center">{{ $item->created_at->format('M d, Y') }}</td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-1" role="group">
                                     <button class="btn btn-sm btn-outline-info preview-btn" 
                                             data-title="{{ $item->title_en }}"
                                             data-type="{{ $item->type }}"
@@ -135,7 +135,7 @@
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     <a href="{{ route('admin.media.edit', $item) }}" 
-                                       class="btn btn-sm btn-primary" title="Edit">
+                                       class="btn btn-sm btn-primary btn-border-rounded" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form action="{{ route('admin.media.destroy', $item) }}" 

@@ -32,16 +32,16 @@
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered">
+            <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Key</th>
-                        <th>Group</th>
+                        <th class="text-center">Key</th>
+                        <th class="text-center">Group</th>
                         @foreach($languages as $language)
-                            <th>{{ $language->name }}</th>
+                            <th class="text-center">{{ $language->name }}</th>
                         @endforeach
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,16 +50,16 @@
                             <td><code>{{ $translation->key }}</code></td>
                             <td><span class="badge bg-info">{{ $translation->group }}</span></td>
                             @foreach($languages as $language)
-                                <td>{{ Str::limit($translation->translations[$language->code] ?? '', 30) }}</td>
+                                <td class="text-center">{{ Str::limit($translation->translations[$language->code] ?? '', 30) }}</td>
                             @endforeach
-                            <td>
+                            <td class="text-center">
                                 @if($translation->is_active)
                                     <span class="badge bg-success">Active</span>
                                 @else
                                     <span class="badge bg-danger">Inactive</span>
                                 @endif
                             </td>
-                            <td>
+                            <td class="text-center">
                                 <a href="{{ route('admin.translations.edit', $translation) }}" class="btn btn-sm btn-primary">
                                     <i class="fas fa-edit"></i>
                                 </a>

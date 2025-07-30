@@ -14,16 +14,16 @@
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered">
+            <table class="table rounded">
                 <thead>
                     <tr>
-                        <th>Display</th>
-                        <th>Type</th>
-                        <th>Title</th>
-                        <th>Count</th>
-                        <th>Sort Order</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th class="text-center">Display</th>
+                        <th class="text-center">Type</th>
+                        <th class="text-center">Title</th>
+                        <th class="text-center">Count</th>
+                        <th class="text-center">Sort Order</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,25 +38,25 @@
                                     <span class="text-muted">No display</span>
                                 @endif
                             </td>
-                            <td>
+                            <td class="text-center">
                                 <span class="badge bg-{{ $counter->type === 'image' ? 'success' : 'info' }}">
                                     {{ ucfirst($counter->type) }}
                                 </span>
                             </td>
-                            <td>{{ $counter->title_en }}</td>
-                            <td>
+                            <td class="text-center">{{ $counter->title_en }}</td>
+                            <td class="text-center">
                                 <span class="badge bg-primary fs-6">{{ number_format($counter->count) }}</span>
                             </td>
-                            <td>{{ $counter->sort_order }}</td>
-                            <td>
+                            <td class="text-center">{{ $counter->sort_order }}</td>
+                            <td class="text-center">
                                 @if($counter->is_active)
                                     <span class="badge bg-success">Active</span>
                                 @else
                                     <span class="badge bg-danger">Inactive</span>
                                 @endif
                             </td>
-                            <td>
-                                <a href="{{ route('admin.counters.edit', $counter) }}" class="btn btn-sm btn-primary">
+                            <td class="text-center">
+                                <a href="{{ route('admin.counters.edit', $counter) }}" class="btn btn-sm btn-primary me-2">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <form action="{{ route('admin.counters.destroy', $counter) }}" method="POST" class="d-inline">

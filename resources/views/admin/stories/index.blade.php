@@ -14,34 +14,34 @@
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered">
+            <table class="table">
                 <thead>
                     <tr>
-                        <th>Image</th>
-                        <th>Title</th>
-                        <th>Status</th>
-                        <th>Created</th>
-                        <th>Actions</th>
+                        <th class="text-center">Image</th>
+                        <th class="text-center">Title</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Created</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($stories as $story)
                         <tr>
-                            <td>
+                            <td class="text-center">
                                 <img src="{{ $story->image_url }}" alt="{{ $story->title_en }}" 
                                      style="width: 60px; height: 60px; object-fit: cover;" class="rounded">
                             </td>
-                            <td>{{ $story->title_en }}</td>
-                            <td>
+                            <td class="text-center">{{ $story->title_en }}</td>
+                            <td class="text-center">
                                 @if($story->is_active)
                                     <span class="badge bg-success">Active</span>
                                 @else
                                     <span class="badge bg-danger">Inactive</span>
                                 @endif
                             </td>
-                            <td>{{ $story->created_at->format('M j, Y') }}</td>
-                            <td>
-                                <a href="{{ route('admin.stories.edit', $story) }}" class="btn btn-sm btn-primary">
+                            <td class="text-center">{{ $story->created_at->format('M j, Y') }}</td>
+                            <td class="text-center">
+                                <a href="{{ route('admin.stories.edit', $story) }}" class="btn btn-sm btn-primary me-2">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <form action="{{ route('admin.stories.destroy', $story) }}" method="POST" class="d-inline">

@@ -16,12 +16,12 @@
         <div class="row">
             @forelse($partners as $partner)
                 <div class="col-md-3 mb-4">
-                    <div class="card">
+                    <div class="card h-100">
                         <div class="text-center p-3">
                             <img src="{{ $partner->logo_url }}" alt="{{ $partner->name_en }}" 
                                  class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover;">
                         </div>
-                        <div class="card-body text-center">
+                        <div class="card-body d-flex flex-column justify-content-between text-center">
                             <h6 class="card-title">{{ $partner->name_en }}</h6>
                             @if($partner->website_url)
                                 <p class="card-text small text-muted">
@@ -38,8 +38,8 @@
                                         <span class="badge bg-danger">Inactive</span>
                                     @endif
                                 </small>
-                                <div class="btn-group" role="group">
-                                    <a href="{{ route('admin.partners.edit', $partner) }}" class="btn btn-sm btn-outline-primary">
+                                <div class="d-flex gap-1" role="group">
+                                    <a href="{{ route('admin.partners.edit', $partner) }}" class="btn btn-sm btn-outline-primary btn-border-rounded">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form action="{{ route('admin.partners.destroy', $partner) }}" method="POST" class="d-inline">

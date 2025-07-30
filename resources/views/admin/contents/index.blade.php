@@ -14,31 +14,31 @@
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered">
+            <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Key</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th class="text-center">Key</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
     @forelse($contents as $content)
         <tr>
-            <td>
+            <td class="text-center">
                 {{ $content->key }}
                 @if($content->key === 'page_headers')
                     <br><small class="text-muted">Controls page header backgrounds</small>
                 @endif
             </td>
-            <td>
+            <td class="text-center">
                 @if($content->is_active)
                     <span class="badge bg-success">Active</span>
                 @else
                     <span class="badge bg-danger">Inactive</span>
                 @endif
             </td>
-            <td>
+            <td class="text-center">
                 <a href="{{ route('admin.contents.edit', $content) }}" class="btn btn-sm btn-primary">
                     <i class="fas fa-edit"></i>
                 </a>
